@@ -25,8 +25,11 @@ for line in content:
         inquiry = inquiry_match.group(0)
         env_version = env_version_match.group(0)
 
+        # Remove the inquiry from the details string
+        details = line.replace(f" - {inquiry}", "").strip()
+
         # Assign details
-        inquiry_data[inquiry][env_version]["Details"] = line
+        inquiry_data[inquiry][env_version]["Details"] = details
 
 # Convert grouped data to the desired format
 final_output = []
@@ -43,8 +46,8 @@ for inquiry, env_data in inquiry_data.items():
     })
 
 # Save the final output to JSON
-output_grouped_path = "Grouped_Inquiries_No_Dates.json"
+output_grouped_path = "Simplified_Grouped_Inquiries.json"
 with open(output_grouped_path, "w", encoding="utf-8") as json_file:
     json.dump(final_output, json_file, indent=4)
 
-print(f"Grouped data saved to {output_grouped_path}")
+print(f"Simplified grouped data saved to {output_grouped_path}")
