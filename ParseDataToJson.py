@@ -36,12 +36,15 @@ for line in content:
         inquiry = inquiry_match.group(0)
         env_version_raw = env_version_match.group(0)
 
-        # Extract and format the version logic
+        # Extract and format the instance and version logic
+        env_instance_match = re.match(r"(DEV|TEST|LIVETEST|PROD)", env_version_raw)
+        env_instance = env_instance_match.group(0) if env_instance_match else "Unknown"
         versions = re.findall(r"\d+\.\d+(?:/\d+\.\d+)*", env_version_raw)
+
         if len(versions) > 1:
-            env_version = f"{versions[0]} -> {versions[-1]}"
+            env_version = f"{env_instance} {versions[0]} -> {versions[-1]}"
         else:
-            env_version = versions[0]  # Single version
+            env_version = f"{env_instance} {versions[0]}" if versions else env_instance
 
         # Remove the inquiry from the details string
         details = line.replace(f" - {inquiry}", "").strip()
@@ -54,33 +57,22 @@ for line in content:
 # Convert grouped data to the desired format
 final_output = []
 for inquiry, env_data in inquiry_data.items():
-    env_versions = []
+    env_details = []
     for env_version, info in env_data.items():
-        start_date = min(info["Dates"], default=None)
-        end_date = max(info["Dates"], default=None)
+        # Deduplicate dates
+        unique_dates = sorted(set(info["Dates"]))
 
-        env_versions.append({
+        env_details.append({
             "Environment_Version": env_version,
             "Details": list(set(info["Details"])),  # Consolidate unique details
-            "Dates": info["Dates"],  # Include dates for iteration safety
-            "StartDate": start_date,
-            "EndDate": end_date
+            "Dates": unique_dates,  # Use unique dates
+            "StartDate": min(unique_dates, default=None),
+            "EndDate": max(unique_dates, default=None)
         })
-
-    # Extract the earliest and latest dates across all environments
-    all_dates = [
-        datetime.strptime(date, "%m/%d/%Y")
-        for version in env_versions if "Dates" in version
-        for date in version["Dates"] if date
-    ]
-    overall_start = min(all_dates).strftime("%m/%d/%Y") if all_dates else None
-    overall_end = max(all_dates).strftime("%m/%d/%Y") if all_dates else None
 
     final_output.append({
         "Inquiry": inquiry,
-        "StartDate": overall_start,
-        "EndDate": overall_end,
-        "Environment_Versions": env_versions
+        "Environment_Details": env_details  # Renamed key
     })
 
 # Save the final output to JSON
@@ -88,4 +80,4 @@ output_grouped_path = "./jsonObj/final_file_parse__PI_15-18_ImpQA_manual.json"
 with open(output_grouped_path, "w", encoding="utf-8") as json_file:
     json.dump(final_output, json_file, indent=4)
 
-print(f"Enhanced grouped data with fixed dates saved to {output_grouped_path}")
+print(f"Enhanced grouped data with adjusted format saved to {output_grouped_path}")
