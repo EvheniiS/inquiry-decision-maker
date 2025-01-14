@@ -36,15 +36,22 @@ for line in content:
         inquiry = inquiry_match.group(0)
         env_version_raw = env_version_match.group(0)
 
-        # Extract and format the instance and version logic
+        # Extract the environment instance (e.g., DEV, TEST, etc.)
         env_instance_match = re.match(r"(DEV|TEST|LIVETEST|PROD)", env_version_raw)
         env_instance = env_instance_match.group(0) if env_instance_match else "Unknown"
+
+        # Extract all versions (base and target)
         versions = re.findall(r"\d+\.\d+(?:/\d+\.\d+)*", env_version_raw)
 
         if len(versions) > 1:
-            env_version = f"{env_instance} {versions[0]} -> {versions[-1]}"
+            # Base and target versions are mentioned
+            env_version = f"{env_instance} {versions[0]} - {versions[-1]}"
+        elif len(versions) == 1:
+            # Only a single version is mentioned
+            env_version = f"{env_instance} {versions[0]}"
         else:
-            env_version = f"{env_instance} {versions[0]}" if versions else env_instance
+            # No versions found, fallback to environment instance only
+            env_version = env_instance
 
         # Remove the inquiry from the details string
         details = line.replace(f" - {inquiry}", "").strip()
@@ -53,6 +60,7 @@ for line in content:
         inquiry_data[inquiry][env_version]["Details"].append(details)
         if current_date:
             inquiry_data[inquiry][env_version]["Dates"].append(current_date)
+
 
 # Convert grouped data to the desired format
 final_output = []
@@ -81,3 +89,6 @@ with open(output_grouped_path, "w", encoding="utf-8") as json_file:
     json.dump(final_output, json_file, indent=4)
 
 print(f"Enhanced grouped data with adjusted format saved to {output_grouped_path}")
+print(f"Raw Environment Version: {env_version_raw}")
+print(f"Extracted Versions: {versions}")
+print(f"Final Environment_Version: {env_version}")
