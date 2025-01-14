@@ -4,7 +4,7 @@ from collections import defaultdict
 from datetime import datetime
 
 # Initialize data structures
-inquiry_data = defaultdict(lambda: defaultdict(lambda: {"Details": None}))
+inquiry_data = defaultdict(lambda: defaultdict(lambda: {"Details": None, "Dates": []}))
 
 # Define the regex patterns
 date_pattern = r"\d{1,2}/\d{1,2}/\d{2}"
@@ -46,19 +46,20 @@ for line in content:
         # Remove the inquiry from the details string
         details = line.replace(f" - {inquiry}", "").strip()
 
-        # Assign details and date
+        # Assign details and track dates
         inquiry_data[inquiry][env_version_raw]["Details"] = details
         inquiry_data[inquiry][env_version_raw]["Environment_Version"] = env_version
-        inquiry_data[inquiry][env_version_raw]["StartDate"] = current_date
+        inquiry_data[inquiry][env_version_raw]["Dates"].append(current_date)
 
 # Convert grouped data to the desired format
 final_output = []
 for inquiry, env_data in inquiry_data.items():
-    # Extract the earliest StartDate for the inquiry
-    start_dates = [
-        datetime.strptime(info["StartDate"], "%m/%d/%Y") for info in env_data.values()
+    # Extract the earliest and latest dates for the inquiry
+    all_dates = [
+        datetime.strptime(date, "%m/%d/%Y") for info in env_data.values() for date in info["Dates"]
     ]
-    earliest_date = min(start_dates).strftime("%m/%d/%Y")  # Format as MM/DD/YYYY
+    start_date = min(all_dates).strftime("%m/%d/%Y")  # Format as MM/DD/YYYY
+    end_date = max(all_dates).strftime("%m/%d/%Y")    # Format as MM/DD/YYYY
 
     env_versions = []
     for env_version_raw, info in env_data.items():
@@ -69,13 +70,14 @@ for inquiry, env_data in inquiry_data.items():
 
     final_output.append({
         "Inquiry": inquiry,
-        "StartDate": earliest_date,
+        "StartDate": start_date,
+        "EndDate": end_date,
         "Environment_Versions": env_versions
     })
 
 # Save the final output to JSON
-output_grouped_path = "./jsonObj/Enhanced_Environment_Versions_With_Dates.json"
+output_grouped_path = "./jsonObj/Enhanced_Environment_Versions_With_Start_End_Dates.json"
 with open(output_grouped_path, "w", encoding="utf-8") as json_file:
     json.dump(final_output, json_file, indent=4)
 
-print(f"Enhanced grouped data with corrected dates saved to {output_grouped_path}")
+print(f"Enhanced grouped data with start and end dates saved to {output_grouped_path}")
