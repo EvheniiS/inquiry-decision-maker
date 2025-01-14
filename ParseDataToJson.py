@@ -43,6 +43,13 @@ for line in content:
         # Extract all versions (base and target)
         versions = re.findall(r"\d+\.\d+(?:/\d+\.\d+)*", env_version_raw)
 
+        # Fallback to Details parsing if necessary
+        if len(versions) < 2:
+            # Try extracting versions from Details if multiple versions are not in env_version_raw
+            details_versions = re.findall(r"\d+\.\d+(?:/\d+\.\d+)*", line)
+            if len(details_versions) > len(versions):
+                versions = details_versions
+
         if len(versions) > 1:
             # Base and target versions are mentioned
             env_version = f"{env_instance} {versions[0]} - {versions[-1]}"
@@ -90,5 +97,4 @@ with open(output_grouped_path, "w", encoding="utf-8") as json_file:
 
 print(f"Enhanced grouped data with adjusted format saved to {output_grouped_path}")
 print(f"Raw Environment Version: {env_version_raw}")
-print(f"Extracted Versions: {versions}")
-print(f"Final Environment_Version: {env_version}")
+print(f"Extracted Versions from raw: {versions}")
