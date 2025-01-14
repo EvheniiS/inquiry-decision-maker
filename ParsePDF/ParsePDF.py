@@ -1,8 +1,8 @@
 import pdfplumber
 import os
 
-# Path to your PDF file
-pdf_path = "PI18 - Access Digital Implementation testing Queue for QA.pdf"
+# Update the path to include the ParsePDF directory
+pdf_path = os.path.join("ParsePDF", "PI17-Testing Queue for QA.pdf")
 
 # Dynamically generate the output file name
 base_name = os.path.splitext(os.path.basename(pdf_path))[0]  # Extract file name without extension

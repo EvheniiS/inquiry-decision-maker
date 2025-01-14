@@ -12,7 +12,7 @@ inquiry_pattern = r"[A-Z]+-[0-9]+"
 env_version_pattern = r"(DEV|TEST|LIVETEST|PROD)\s(?:\d+\.\d+(/\d+\.\d+)*)(?:\s\d+\.\d+)*"
 
 # Read the input text file
-with open("PI18 - Access Digital Implementation testing Queue for QA.txt", "r", encoding="utf-8") as file:
+with open("PI_15-18_ImpQA_Testing.txt", "r", encoding="utf-8") as file:
     content = file.readlines()
 
 # Parse the content
@@ -76,7 +76,7 @@ for inquiry, env_data in inquiry_data.items():
     })
 
 # Save the final output to JSON
-output_grouped_path = "./jsonObj/Enhanced_Environment_Versions_With_Start_End_Dates.json"
+output_grouped_path = "./jsonObj/PI_15-18_Imp Testing.txt.json"
 with open(output_grouped_path, "w", encoding="utf-8") as json_file:
     json.dump(final_output, json_file, indent=4)
 
