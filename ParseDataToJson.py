@@ -1,11 +1,13 @@
 import json
 import re
 from collections import defaultdict
+from datetime import datetime
 
 # Initialize data structures
 inquiry_data = defaultdict(lambda: defaultdict(lambda: {"Details": None}))
 
 # Define the regex patterns
+date_pattern = r"\d{1,2}/\d{1,2}/\d{2}"
 inquiry_pattern = r"[A-Z]+-[0-9]+"
 env_version_pattern = r"(DEV|TEST|LIVETEST|PROD)\s(?:\d+\.\d+(/\d+\.\d+)*)(?:\s\d+\.\d+)*"
 
@@ -14,8 +16,17 @@ with open("PI18 - Access Digital Implementation testing Queue for QA.txt", "r", 
     content = file.readlines()
 
 # Parse the content
+current_date = None
 for line in content:
     line = line.strip()
+
+    # Extract and update the current date
+    date_match = re.search(date_pattern, line)
+    if date_match:
+        raw_date = date_match.group(0)
+        # Convert to MM/DD/YYYY format
+        current_date = datetime.strptime(raw_date, "%m/%d/%y").strftime("%m/%d/%Y")
+        continue
 
     # Extract inquiry and environment/version details
     inquiry_match = re.search(inquiry_pattern, line)
@@ -28,7 +39,6 @@ for line in content:
         # Extract and format the version logic
         versions = re.findall(r"\d+\.\d+(?:/\d+\.\d+)*", env_version_raw)
         if len(versions) > 1:
-            # Format version ranges for upgrades or conversions
             env_version = f"{versions[0]} -> {versions[-1]}"
         else:
             env_version = versions[0]  # Single version
@@ -36,27 +46,36 @@ for line in content:
         # Remove the inquiry from the details string
         details = line.replace(f" - {inquiry}", "").strip()
 
-        # Assign details
+        # Assign details and date
         inquiry_data[inquiry][env_version_raw]["Details"] = details
         inquiry_data[inquiry][env_version_raw]["Environment_Version"] = env_version
+        inquiry_data[inquiry][env_version_raw]["StartDate"] = current_date
 
 # Convert grouped data to the desired format
 final_output = []
 for inquiry, env_data in inquiry_data.items():
+    # Extract the earliest StartDate for the inquiry
+    start_dates = [
+        datetime.strptime(info["StartDate"], "%m/%d/%Y") for info in env_data.values()
+    ]
+    earliest_date = min(start_dates).strftime("%m/%d/%Y")  # Format as MM/DD/YYYY
+
     env_versions = []
     for env_version_raw, info in env_data.items():
         env_versions.append({
             "Environment_Version": info["Environment_Version"],
             "Details": info["Details"]
         })
+
     final_output.append({
         "Inquiry": inquiry,
+        "StartDate": earliest_date,
         "Environment_Versions": env_versions
     })
 
 # Save the final output to JSON
-output_grouped_path = "./jsonObj/Enhanced_Environment_Versions.json"
+output_grouped_path = "./jsonObj/Enhanced_Environment_Versions_With_Dates.json"
 with open(output_grouped_path, "w", encoding="utf-8") as json_file:
     json.dump(final_output, json_file, indent=4)
 
-print(f"Enhanced grouped data saved to {output_grouped_path}")
+print(f"Enhanced grouped data with corrected dates saved to {output_grouped_path}")
