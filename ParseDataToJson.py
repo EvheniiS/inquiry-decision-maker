@@ -55,7 +55,7 @@ for inquiry, env_data in inquiry_data.items():
     })
 
 # Save the final output to JSON
-output_grouped_path = "Enhanced_Environment_Versions.json"
+output_grouped_path = "./jsonObj/Enhanced_Environment_Versions.json"
 with open(output_grouped_path, "w", encoding="utf-8") as json_file:
     json.dump(final_output, json_file, indent=4)
 
