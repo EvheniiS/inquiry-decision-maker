@@ -193,7 +193,7 @@ def test_with_file(file_path):
         output = parser.parse_file(file_path)
         
         # Save output
-        output_file = "jsonObj/parsed_output.json"
+        output_file = "./jsonObj/Fix-NotAllDataParsed_PI_15-18_Cleaned.json"
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=4)
         
