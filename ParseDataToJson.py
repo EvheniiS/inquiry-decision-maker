@@ -3,98 +3,214 @@ import re
 from collections import defaultdict
 from datetime import datetime
 
-# Initialize data structures
-inquiry_data = defaultdict(lambda: defaultdict(lambda: {"Details": [], "Dates": []}))
+class QADataParser:
+    def __init__(self, debug=True):
+        self.debug = debug
+        
+        # Core patterns
+        self.date_pattern = r"\d{1,2}/\d{1,2}/\d{2}"
+        self.inquiry_pattern = r"[A-Z]+-[0-9]+"
+        
+        # Simplified environment pattern - only the four base types and combinations
+        self.environment_pattern = r"""
+            (?:QA\s*-\s*)?                          # Optional QA prefix
+            ((?:DEV|TEST|LIVETEST|PROD)             # First environment
+            (?:/(?:DEV|TEST|LIVETEST|PROD))*)       # Additional environments
+            (?:\s+QA)?                              # Optional QA suffix
+        """
+        
+        # Version pattern
+        self.version_pattern = r"""
+            (
+                (?:3\.41/4\.41)                     # Legacy version
+                (?:\s*-\s*5\.\d+)?                  # Optional conversion target
+                |
+                (?:5\.\d+)                          # Single modern version
+                (?:\s*-\s*5\.\d+)?                  # Optional range end
+            )
+        """
+        
+        # Combined pattern for environment and version
+        self.env_version_pattern = f"""
+            .*?                                     # Any text before
+            {self.environment_pattern}              # Environment group
+            [\s-]*                                  # Flexible spacing/dashes
+            {self.version_pattern}                  # Version group
+            (?=\s*(?:-|$|\())                      # Lookahead for end
+        """
+        
+        self.debug_info = {
+            'processed_lines': 0,
+            'skipped_lines': [],
+            'parsed_lines': [],
+            'date_lines': []
+        }
 
-# Define the regex patterns
-date_pattern = r"\d{1,2}/\d{1,2}/\d{2}"
-inquiry_pattern = r"[A-Z]+-[0-9]+"
-env_version_pattern = r"(DEV|TEST|LIVETEST|PROD)\s(?:\d+\.\d+(/\d+\.\d+)*)(?:\s\d+\.\d+)*"
+    def log_debug(self, message, line="", category="info"):
+        if self.debug:
+            if category == "skip":
+                self.debug_info['skipped_lines'].append({"line": line, "reason": message})
+            elif category == "parse":
+                self.debug_info['parsed_lines'].append({"line": line, "parsed_data": message})
+            elif category == "date":
+                self.debug_info['date_lines'].append({"line": line, "date": message})
 
-# Read the input text file
-with open("PI_15-18_ImpQA_manual.txt", "r", encoding="utf-8") as file:
-    content = file.readlines()
+    def clean_line(self, line):
+        original = line
+        line = line.replace(" LT ", " LIVETEST ").replace(" LIVE ", " PROD ")
+        line = re.sub(r'\s+', ' ', line)
+        line = re.sub(r'\s*-\s*$', '', line)
+        cleaned = line.strip()
+        
+        if original != cleaned:
+            self.log_debug("Line cleaned", f"Original: '{original}' -> Cleaned: '{cleaned}'")
+        return cleaned
 
-# Parse the content
-current_date = None
-for line in content:
-    line = line.strip()
+    def extract_date(self, line):
+        match = re.search(self.date_pattern, line)
+        if match:
+            raw_date = match.group(0)
+            formatted_date = datetime.strptime(raw_date, "%m/%d/%y").strftime("%m/%d/%Y")
+            self.log_debug(formatted_date, line, "date")
+            return formatted_date
+        return None
 
-    # Extract and update the current date
-    date_match = re.search(date_pattern, line)
-    if date_match:
-        raw_date = date_match.group(0)
-        # Convert to MM/DD/YYYY format
-        current_date = datetime.strptime(raw_date, "%m/%d/%y").strftime("%m/%d/%Y")
-        continue
+    def extract_inquiry(self, line):
+        match = re.search(self.inquiry_pattern, line)
+        inquiry = match.group(0) if match else "Unspecified"
+        self.log_debug(f"Extracted inquiry: {inquiry}", line)
+        return inquiry
 
-    # Extract inquiry and environment/version details
-    inquiry_match = re.search(inquiry_pattern, line)
-    env_version_match = re.search(env_version_pattern, line)
+    def extract_env_version(self, line):
+        pattern = re.compile(self.env_version_pattern, re.VERBOSE)
+        match = pattern.search(line)
+        
+        if match:
+            env = match.group(1).strip()
+            version = match.group(2).strip()
+            
+            # Clean up environment
+            env = re.sub(r'\s+QA\s*', ' ', env).strip()
+            
+            # Clean up version
+            version = re.sub(r'\s*-\s*', '-', version).strip()
+            
+            self.log_debug(f"Successfully extracted - env: {env}, version: {version}", line, "parse")
+            return env, version
+            
+        self.log_debug(f"Failed to match environment/version pattern", line, "skip")
+        return None, None
 
-    if inquiry_match and env_version_match:
-        inquiry = inquiry_match.group(0)
-        env_version_raw = env_version_match.group(0)
+    def parse_file(self, file_path):
+        inquiry_data = defaultdict(lambda: defaultdict(lambda: {"Details": [], "Dates": []}))
+        current_date = None
+        
+        with open(file_path, "r", encoding="utf-8") as file:
+            for line in file:
+                self.debug_info['processed_lines'] += 1
+                line = self.clean_line(line)
+                
+                # Skip irrelevant lines
+                if re.search(r"(holiday|vacation|sick leave|-{3,})", line, re.IGNORECASE):
+                    self.log_debug("Irrelevant line (holiday/vacation/sick leave/separator)", line, "skip")
+                    continue
+                
+                # Update current date if found
+                date = self.extract_date(line)
+                if date:
+                    current_date = date
+                    continue
+                
+                # Skip empty lines or date-only lines
+                if not line or re.match(r'^[A-Za-z]{3}\s+\d{1,2}/\d{1,2}/\d{2}', line):
+                    self.log_debug("Empty line or date-only line", line, "skip")
+                    continue
+                
+                # Extract main components
+                env, version = self.extract_env_version(line)
+                if env and version:
+                    inquiry = self.extract_inquiry(line)
+                    env_version = f"{env} {version}"
+                    
+                    # Remove inquiry from details if present
+                    details = re.sub(rf"\s*-\s*{inquiry}\s*$", "", line).strip()
+                    
+                    # Store the data
+                    inquiry_data[inquiry][env_version]["Details"].append(details)
+                    if current_date:
+                        inquiry_data[inquiry][env_version]["Dates"].append(current_date)
+                else:
+                    self.log_debug("Failed to extract environment and version", line, "skip")
+        
+        return self.format_output(inquiry_data)
 
-        # Extract the environment instance (e.g., DEV, TEST, etc.)
-        env_instance_match = re.match(r"(DEV|TEST|LIVETEST|PROD)", env_version_raw)
-        env_instance = env_instance_match.group(0) if env_instance_match else "Unknown"
+    def format_output(self, inquiry_data):
+        final_output = []
+        for inquiry, env_data in inquiry_data.items():
+            env_details = []
+            for env_version, info in env_data.items():
+                unique_dates = sorted(set(info["Dates"]))
+                env_details.append({
+                    "Environment_Version": env_version,
+                    "Details": list(set(info["Details"])),
+                    "Dates": unique_dates,
+                    "StartDate": min(unique_dates, default=None),
+                    "EndDate": max(unique_dates, default=None)
+                })
+            
+            final_output.append({
+                "Inquiry": inquiry,
+                "Environment_Details": env_details
+            })
+        
+        return final_output
 
-        # Extract all versions (base and target)
-        versions = re.findall(r"\d+\.\d+(?:/\d+\.\d+)*", env_version_raw)
+    def print_debug_summary(self):
+        """Print detailed debug summary"""
+        if self.debug:
+            print("\n=== DEBUG SUMMARY ===")
+            print(f"Total lines processed: {self.debug_info['processed_lines']}")
+            print(f"Total dates found: {len(self.debug_info['date_lines'])}")
+            print(f"Successfully parsed lines: {len(self.debug_info['parsed_lines'])}")
+            print(f"Skipped lines: {len(self.debug_info['skipped_lines'])}")
+            
+            print("\n=== SKIPPED LINES ===")
+            for skip_info in self.debug_info['skipped_lines']:
+                if "Irrelevant line" not in skip_info['reason']:  # Skip showing holiday/vacation lines
+                    print(f"Line: '{skip_info['line']}'")
+                    print(f"Reason: {skip_info['reason']}\n")
 
-        # Fallback to Details parsing if necessary
-        if len(versions) < 2:
-            # Try extracting versions from Details if multiple versions are not in env_version_raw
-            details_versions = re.findall(r"\d+\.\d+(?:/\d+\.\d+)*", line)
-            if len(details_versions) > len(versions):
-                versions = details_versions
+            print("\n=== SUCCESSFULLY PARSED LINES ===")
+            for parse_info in self.debug_info['parsed_lines'][:5]:  # Show first 5 successful parses
+                print(f"Line: '{parse_info['line']}'")
+                print(f"Parsed: {parse_info['parsed_data']}\n")
 
-        if len(versions) > 1:
-            # Base and target versions are mentioned
-            env_version = f"{env_instance} {versions[0]} - {versions[-1]}"
-        elif len(versions) == 1:
-            # Only a single version is mentioned
-            env_version = f"{env_instance} {versions[0]}"
-        else:
-            # No versions found, fallback to environment instance only
-            env_version = env_instance
+def test_with_file(file_path):
+    parser = QADataParser(debug=True)
+    
+    try:
+        print(f"\nParsing file: {file_path}")
+        output = parser.parse_file(file_path)
+        
+        # Save output
+        output_file = "jsonObj/parsed_output.json"
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(output, f, indent=4)
+        
+        print(f"\nOutput saved to: {output_file}")
+        
+        # Print debug summary
+        parser.print_debug_summary()
+        
+        return output
+        
+    except Exception as e:
+        print(f"Error during parsing: {str(e)}")
+        raise
 
-        # Remove the inquiry from the details string
-        details = line.replace(f" - {inquiry}", "").strip()
-
-        # Assign details and track dates
-        inquiry_data[inquiry][env_version]["Details"].append(details)
-        if current_date:
-            inquiry_data[inquiry][env_version]["Dates"].append(current_date)
-
-
-# Convert grouped data to the desired format
-final_output = []
-for inquiry, env_data in inquiry_data.items():
-    env_details = []
-    for env_version, info in env_data.items():
-        # Deduplicate dates
-        unique_dates = sorted(set(info["Dates"]))
-
-        env_details.append({
-            "Environment_Version": env_version,
-            "Details": list(set(info["Details"])),  # Consolidate unique details
-            "Dates": unique_dates,  # Use unique dates
-            "StartDate": min(unique_dates, default=None),
-            "EndDate": max(unique_dates, default=None)
-        })
-
-    final_output.append({
-        "Inquiry": inquiry,
-        "Environment_Details": env_details  # Renamed key
-    })
-
-# Save the final output to JSON
-output_grouped_path = "./jsonObj/final_file_parse__PI_15-18_ImpQA_manual.json"
-with open(output_grouped_path, "w", encoding="utf-8") as json_file:
-    json.dump(final_output, json_file, indent=4)
-
-print(f"Enhanced grouped data with adjusted format saved to {output_grouped_path}")
-print(f"Raw Environment Version: {env_version_raw}")
-print(f"Extracted Versions from raw: {versions}")
+if __name__ == "__main__":
+    try:
+        output = test_with_file("PI_15-18_Cleaned.txt")
+        print("\nParsing completed successfully!")
+    except Exception as e:
+        print(f"Failed to complete parsing: {str(e)}")
