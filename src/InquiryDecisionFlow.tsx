@@ -3,29 +3,31 @@ import { Calendar } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card';
 import { ProjectNames, InquiryData } from './types';
 
-declare global {
-  interface Window {
-    fs: {
-      readFile: (path: string) => Promise<Uint8Array>;
-    }
-  }
-}
-
+// Define the Step interface
 interface Step {
   number: number;
   label: string;
 }
 
-const InquiryDecisionFlow: React.FC = () => {
+// Define component props interface
+interface InquiryDecisionFlowProps {
+  projectData: ProjectNames | null;
+}
+
+const InquiryDecisionFlow: React.FC<InquiryDecisionFlowProps> = ({ projectData }) => {
+  // State declarations
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [inquiryDate, setInquiryDate] = useState<string>('');
   const [selectedEnvironment, setSelectedEnvironment] = useState<string>('');
   const [selectedVersion, setSelectedVersion] = useState<string>('');
-  const [projectNames, setProjectNames] = useState<string[]>([]);
   const [inquiryData, setInquiryData] = useState<InquiryData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Get project names from props
+  const projectNames = projectData?.project_names || [];
+
+  // Define steps
   const steps: Step[] = [
     { number: 1, label: 'Select Project' },
     { number: 2, label: 'Select Date' },
@@ -33,35 +35,28 @@ const InquiryDecisionFlow: React.FC = () => {
     { number: 4, label: 'Select Version' }
   ];
 
-  // Load project names from JSON
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load project names
-        const projectResponse = await window.fs.readFile('project_names.json');
-        const projectText = new TextDecoder().decode(projectResponse);
-        const projectData: ProjectNames = JSON.parse(projectText);
-        setProjectNames(projectData.project_names);
+  // Environment options
+  const environments: string[] = ['DEV', 'TEST', 'LIVETEST', 'PROD'];
 
-        // Load inquiry data
-        const inquiryResponse = await window.fs.readFile('Example.json');
-        const inquiryText = new TextDecoder().decode(inquiryResponse);
-        const inquiryData: InquiryData[] = JSON.parse(inquiryText);
-        setInquiryData(inquiryData);
-        
+  // Load inquiry data
+  useEffect(() => {
+    const loadInquiryData = async () => {
+      try {
+        const response = await window.fs.readFile('data/Example.json');
+        const text = new TextDecoder().decode(response);
+        const data: InquiryData[] = JSON.parse(text);
+        setInquiryData(data);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Error loading inquiry data:', error);
         setIsLoading(false);
       }
     };
-    loadData();
+
+    loadInquiryData();
   }, []);
 
-  // Environment options
-  const environments: string[] = ['DEV', 'TEST', 'LIVETEST', 'PROD'];
-  
-  // Get available versions from inquiry data
+  // Helper functions
   const getAvailableVersions = (): string[] => {
     const versions = new Set<string>();
     inquiryData.forEach(inquiry => {
@@ -80,7 +75,8 @@ const InquiryDecisionFlow: React.FC = () => {
     setCurrentStep(prev => prev - 1);
   };
 
-  const renderStep = () => {
+  // Render step content
+  const renderStep = (): JSX.Element | null => {
     switch (currentStep) {
       case 1:
         return (
@@ -233,10 +229,12 @@ const InquiryDecisionFlow: React.FC = () => {
     }
   };
 
+  // Loading state
   if (isLoading) {
-    return <div className="text-center">Loading...</div>;
+    return <div className="text-center">Loading inquiry data...</div>;
   }
 
+  // Main render
   return (
     <Card className="w-full max-w-lg mx-auto">
       <CardHeader>
@@ -248,12 +246,12 @@ const InquiryDecisionFlow: React.FC = () => {
             {steps.map((step) => (
               <div
                 key={step.number}
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                className={`step-indicator ${
                   step.number === currentStep
-                    ? 'bg-blue-500 text-white'
+                    ? 'step-active'
                     : step.number < currentStep
-                    ? 'bg-green-500 text-white'
-                    : 'bg-gray-200'
+                    ? 'step-completed'
+                    : 'step-pending'
                 }`}
               >
                 {step.number}

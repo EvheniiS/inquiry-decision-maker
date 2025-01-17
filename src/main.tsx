@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import InquiryDecisionFlow from './InquiryDecisionFlow';
 import { ProjectNames } from './types';
-import Layout from './components/layout.tsx';
+import Layout from './components/layout';
 import './styles/global.css';
 
 interface AppProps {
@@ -41,7 +41,7 @@ const App: React.FC<AppProps> = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <Layout>
       <div className="max-w-4xl mx-auto">
         <header className="mb-8 text-center">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -55,14 +55,14 @@ const App: React.FC<AppProps> = () => {
         </header>
         
         <main>
-          <InquiryDecisionFlow />
+          <InquiryDecisionFlow projectData={projectData} />
         </main>
 
         <footer className="mt-8 text-center text-sm text-gray-500">
           <p>Total Projects Available: {projectData?.total_count || 0}</p>
         </footer>
       </div>
-    </div>
+    </Layout>
   );
 };
 
@@ -72,10 +72,9 @@ if (!rootElement) {
   throw new Error('Failed to find the root element');
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Render the App component instead of directly rendering Layout
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <Layout>
-      <InquiryDecisionFlow />
-    </Layout>
+    <App />
   </React.StrictMode>
 );
