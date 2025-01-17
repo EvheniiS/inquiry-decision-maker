@@ -1,0 +1,290 @@
+[
+    {
+        "Inquiry": "EASTEX-138",
+        "Environment_Details": [
+            {
+                "Environment_Version": "PROD 5.10",
+                "Details": [
+                    "Team 2 - Ruslan & Kostia & Mykola & Natalia - Day 2 of 4 - Eastex CU PROD 5.10 (initial | full testing )",
+                    "Team 2 - Mykola & Ruslan - Day 4 of 4 - Eastex CU PROD 5.10 (initial | full testing )",
+                    "Ruslan & Kostia - Day 1 of 4 - Eastex CU PROD 5.10 (initial | full testing )",
+                    "Natalia - Day 3 of 4 - Eastex CU PROD 5.10 (initial | full testing )"
+                ],
+                "Dates": [
+                    "12/23/2024",
+                    "12/24/2024",
+                    "12/25/2024",
+                    "12/26/2024"
+                ],
+                "StartDate": "12/23/2024",
+                "EndDate": "12/26/2024"
+            }
+        ]
+    },
+    {
+        "Inquiry": "GENISYS-2113",
+        "Environment_Details": [
+            {
+                "Environment_Version": "DEV 5.11",
+                "Details": [
+                    "Team 1 - Khrystyna & Natalia - Day 3 of 3 - Genisys CU DEV 5.11 (batch | SU + comparing with PROD testing)",
+                    "Team 2 (Batch) - Natalia & Khrystyna & Ekaterina - Day 2 of 3 - Genisys CU DEV 5.11 (batch | SU + comparing with PROD testing)",
+                    "Team 2 (Batch) - Natalia & Khrystyna & Ekaterina - Day 1 of 3 - Genisys CU DEV 5.11 (batch | SU + comparing with PROD testing)"
+                ],
+                "Dates": [
+                    "12/19/2024",
+                    "12/20/2024",
+                    "12/23/2024"
+                ],
+                "StartDate": "12/19/2024",
+                "EndDate": "12/23/2024"
+            }
+        ]
+    },
+    {
+        "Inquiry": "DAKOTAFCU-336",
+        "Environment_Details": [
+            {
+                "Environment_Version": "DEV 5.11",
+                "Details": [
+                    "Team 3 - Eduard & Sun & Tetiana - Day 2 of 2 - Dakotaland FCU DEV 5.11 (UserIdentity | SU testing)",
+                    "Team 1 - Tetiana & Sun & Mykola & Eduard - Day 1 of 2 - Dakotaland FCU DEV 5.11 (UserIdentity | SU testing)"
+                ],
+                "Dates": [
+                    "12/20/2024",
+                    "12/23/2024"
+                ],
+                "StartDate": "12/20/2024",
+                "EndDate": "12/23/2024"
+            }
+        ]
+    },
+    {
+        "Inquiry": "BAYERHGFCU-263",
+        "Environment_Details": [
+            {
+                "Environment_Version": "TEST 3.41/4.41-5.11",
+                "Details": [
+                    "Mykola - Day 1 of 1 - Bayer CU TEST 3.41/4.41 -5.11 (conversion | VT testing)"
+                ],
+                "Dates": [
+                    "12/23/2024"
+                ],
+                "StartDate": "12/23/2024",
+                "EndDate": "12/23/2024"
+            },
+            {
+                "Environment_Version": "TEST 3.41/4.41",
+                "Details": [
+                    "Team 4 - Valeria & Mykola - Day 1 of 1 - Bayer Heritage FCU TEST 3.41/4.41 (conversion | Smoke testing )"
+                ],
+                "Dates": [
+                    "11/05/2024"
+                ],
+                "StartDate": "11/05/2024",
+                "EndDate": "11/05/2024"
+            }
+        ]
+    },
+    {
+        "Inquiry": "Unspecified",
+        "Environment_Details": [
+            {
+                "Environment_Version": "TEST 3.41/4.41-5.10",
+                "Details": [
+                    "Team 4 - Valeria & Mykola & Khrystyna - Day 2 of 2 - Bayer CU TEST 3.41/4.41 -5.10 (conversion | smoke testing)",
+                    "Day 1 of 2 - Bayer CU TEST 3.41/4.41 -5.10 (conversion | smoke testing)"
+                ],
+                "Dates": [
+                    "12/17/2024",
+                    "12/18/2024"
+                ],
+                "StartDate": "12/17/2024",
+                "EndDate": "12/18/2024"
+            },
+            {
+                "Environment_Version": "TEST 3.41/4.41",
+                "Details": [
+                    "Team 3 - Sun - Day 1 of 2 - Evergreen CU TEST 3.41/4.41 (conversion | smoke testing )"
+                ],
+                "Dates": [
+                    "10/01/2024"
+                ],
+                "StartDate": "10/01/2024",
+                "EndDate": "10/01/2024"
+            },
+            {
+                "Environment_Version": "PROD 5.8-5.9",
+                "Details": [
+                    "Day 1 of 2 - Texas Trust PROD 5.8 - 5.9 (batch | VT1 testing )"
+                ],
+                "Dates": [
+                    "09/30/2024"
+                ],
+                "StartDate": "09/30/2024",
+                "EndDate": "09/30/2024"
+            },
+            {
+                "Environment_Version": "LIVETEST 5.9",
+                "Details": [
+                    "Sun - Day 1 of 5 - Certified CU LIVETEST QA 5.9 (Full testing)",
+                    "Sun - Day 2 of 5 - Certified CU LIVETEST QA 5.9 (Full testing)"
+                ],
+                "Dates": [
+                    "08/27/2024",
+                    "08/28/2024"
+                ],
+                "StartDate": "08/27/2024",
+                "EndDate": "08/28/2024"
+            },
+            {
+                "Environment_Version": "DEV 5.9",
+                "Details": [
+                    "Team 2 - Valeria & Mykola & Sun - CUP | Allied CU DEV 5.9"
+                ],
+                "Dates": [
+                    "06/20/2024"
+                ],
+                "StartDate": "06/20/2024",
+                "EndDate": "06/20/2024"
+            },
+            {
+                "Environment_Version": "PROD 5.7-5.8",
+                "Details": [
+                    "Team 1 (Batch) - Mykhailo & Natalia & Tetiana & Ekaterina - Day 2 of 2 - MHCU PROD 5.7 - 5.8 (batch | VT2 + smoke testing )"
+                ],
+                "Dates": [
+                    "06/18/2024"
+                ],
+                "StartDate": "06/18/2024",
+                "EndDate": "06/18/2024"
+            },
+            {
+                "Environment_Version": "LIVETEST/PROD 5.8",
+                "Details": [
+                    "Team 5 - Sun - Day 2 of 5 - Certified CU LIVETEST/PROD QA 5.8",
+                    "Team 5 - Sun - Day 1 of 5 - Certified CU LIVETEST/PROD QA 5.8",
+                    "Sun - Day 3 of 5 - Certified CU LIVETEST/PROD QA 5.8"
+                ],
+                "Dates": [
+                    "06/10/2024",
+                    "06/11/2024",
+                    "06/12/2024"
+                ],
+                "StartDate": "06/10/2024",
+                "EndDate": "06/12/2024"
+            },
+            {
+                "Environment_Version": "LIVETEST 5.7-5.8",
+                "Details": [
+                    "Team 1 (Batch) - Tetiana & Mykhailo - Day 1 of 2 - United CU LIVETEST 5.7 - 5.8 (batch | SU testing )"
+                ],
+                "Dates": [
+                    "04/30/2024"
+                ],
+                "StartDate": "04/30/2024",
+                "EndDate": "04/30/2024"
+            },
+            {
+                "Environment_Version": "DEV 5.7-5.8",
+                "Details": [
+                    "Day 2 of 4 - Innovation CU DEV 5.7 - 5.8 (batch | visual testing )"
+                ],
+                "Dates": [
+                    "04/17/2024"
+                ],
+                "StartDate": "04/17/2024",
+                "EndDate": "04/17/2024"
+            },
+            {
+                "Environment_Version": "DEV 5.8",
+                "Details": [
+                    "Day 2 of 5 - Sharepoint CU DEV 5.8 (conversion | full testing )"
+                ],
+                "Dates": [
+                    "04/15/2024"
+                ],
+                "StartDate": "04/15/2024",
+                "EndDate": "04/15/2024"
+            },
+            {
+                "Environment_Version": "DEV/TEST 5.8",
+                "Details": [
+                    "Day 1 of 5 - First Peoples Community FCU DEV/TEST QA 5.8"
+                ],
+                "Dates": [
+                    "04/09/2024"
+                ],
+                "StartDate": "04/09/2024",
+                "EndDate": "04/09/2024"
+            }
+        ]
+    },
+    {
+        "Inquiry": "MEMHERITCU-501",
+        "Environment_Details": [
+            {
+                "Environment_Version": "DEV 5.10-5.11",
+                "Details": [
+                    "Team 1 (Batch) - Tetiana & Natalia - Day 1 of 2 - MHCU DEV 5.10 - 5.11 (batch | smoke + VT1 + VT2 testing )",
+                    "Team 1 (Batch) - Khrystyna & Valeria - Day 2 of 2 - MHCU DEV 5.10 - 5.11 (batch | SU testing )",
+                    "Team 3 (Batch) - Khrystyna (half day) - Day 2 of 2 - MHCU DEV 5.10 - 5.11 (batch | SU testing )"
+                ],
+                "Dates": [
+                    "12/12/2024",
+                    "12/16/2024",
+                    "12/17/2024"
+                ],
+                "StartDate": "12/12/2024",
+                "EndDate": "12/17/2024"
+            }
+        ]
+    },
+    {
+        "Inquiry": "SHAREPOINT-696",
+        "Environment_Details": [
+            {
+                "Environment_Version": "PROD 3.41/4.41-5.10",
+                "Details": [
+                    "Team 3 (Batch) - Mykola & Ekaterina & Mykhailo & Eduard - Day 2 of 2 - Sharepoint FCU PROD 3.41/4.41 -5.10 (conversion | VT_manual + smoke testing)",
+                    "Team 4 - Mykola & Ekaterina - Day 1 of 2 - Sharepoint FCU PROD 3.41/4.41 -5.10 (conversion | VT_manual testing)"
+                ],
+                "Dates": [
+                    "12/16/2024",
+                    "12/17/2024"
+                ],
+                "StartDate": "12/16/2024",
+                "EndDate": "12/17/2024"
+            }
+        ]
+    },
+    {
+        "Inquiry": "GNOFCU-355",
+        "Environment_Details": [
+            {
+                "Environment_Version": "PROD 5.9-5.10",
+                "Details": [
+                    "Team 1 (Batch) - Eduard & Natalia - Day 1 of 1 - GNOFCU PROD 5.9 - 5.10 (batch | VT1 testing )"
+                ],
+                "Dates": [
+                    "12/16/2024"
+                ],
+                "StartDate": "12/16/2024",
+                "EndDate": "12/16/2024"
+            },
+            {
+                "Environment_Version": "LIVETEST 5.9-5.10",
+                "Details": [
+                    "Mykhailo - Day 1 of 2 - GNOFCU LIVETEST 5.9 - 5.10 (batch | VT1 testing )",
+                    "Team 1 - Mykhailo & Tetiana - Day 2 of 2 - GNOFCU LIVETEST 5.9 - 5.10 (batch | VT2 + smoke testing )"
+                ],
+                "Dates": [
+                    "11/04/2024",
+                    "11/05/2024"
+                ],
+                "StartDate": "11/04/2024",
+                "EndDate": "11/05/2024"
+            }
+        ]
+    }
+]
