@@ -2,6 +2,7 @@ import json
 import re
 from collections import defaultdict
 from datetime import datetime
+import os
 
 class QADataParser:
     def __init__(self, debug=True):
@@ -149,9 +150,16 @@ class QADataParser:
         for inquiry, env_data in inquiry_data.items():
             env_details = []
             for env_version, info in env_data.items():
+                # Split Environment and Version from Environment_Version
+                if " " in env_version:
+                    environment, version = env_version.split(" ", 1)
+                else:
+                    environment, version = env_version, None
+                
                 unique_dates = sorted(set(info["Dates"]))
                 env_details.append({
-                    "Environment_Version": env_version,
+                    "Environment": environment.strip(),
+                    "Version": version.strip() if version else None,
                     "Details": list(set(info["Details"])),
                     "Dates": unique_dates,
                     "StartDate": min(unique_dates, default=None),
@@ -193,7 +201,8 @@ def test_with_file(file_path):
         output = parser.parse_file(file_path)
         
         # Save output
-        output_file = "./jsonObj/Fix-NotAllDataParsed_PI_15-18_Cleaned.json"
+        output_file = os.path.join("./src/data", "testing_history.json")
+
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=4)
         
@@ -210,7 +219,13 @@ def test_with_file(file_path):
 
 if __name__ == "__main__":
     try:
-        output = test_with_file("PI_15-18_Cleaned.txt")
+        # Assuming the script is in the Py_Scripts directory
+        file_name = "PI_15-18_Cleaned.txt"
+        file_path = os.path.join("Py_Scripts", file_name)
+
+        print(file_path)  # This will output: Py_Scripts/PI_15-18_Cleaned.txt
+
+        output = test_with_file(file_path)
         print("\nParsing completed successfully!")
     except Exception as e:
         print(f"Failed to complete parsing: {str(e)}")
