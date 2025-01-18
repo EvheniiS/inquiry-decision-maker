@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ProjectSelector } from './components/ProjectSelector'
-import { EnvironmentSelector } from './components/EnvironmentSelector'
-import { IssueTypeSelector } from './components/IssueTypeSelector'
-import { TimeSelector } from './components/TimeSelector'
-import { RootCauseSelector } from './components/RootCauseSelector'
+import ProjectSelector from './components/ProjectSelector';
+import EnvironmentSelector from './components/EnvironmentSelector'
+// import { IssueTypeSelector } from './components/IssueTypeSelector'
+// import { TimeSelector } from './components/TimeSelector'
+// import { RootCauseSelector } from './components/RootCauseSelector'
 
 // Main App Component
 function App() {
