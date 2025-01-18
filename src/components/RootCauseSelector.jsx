@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const RootCauseSelector = ({ wasTested, issueType, onLabelAssign }) => {
-  const [selectedRootCause, setSelectedRootCause] = useState('');
-
+const RootCauseSelector = ({ wasTested, onLabelAssign, selectedIssueType }) => {
   const rootCauses = [
     { label: 'Code Problem', value: 'CP' },
     { label: 'Configuration Issue', value: 'CI' },
@@ -12,11 +10,14 @@ const RootCauseSelector = ({ wasTested, issueType, onLabelAssign }) => {
   ];
 
   const handleSelection = (value) => {
-    setSelectedRootCause(value);
     const prefix = wasTested ? '' : 'NTIT_';
     const label = `${prefix}${value}`;
     onLabelAssign(label);
   };
+
+  if (selectedIssueType !== 'Issue') {
+    return null; // Only render RootCauseSelector if the issue type is "Issue"
+  }
 
   return (
     <div className="space-y-4">
@@ -31,7 +32,6 @@ const RootCauseSelector = ({ wasTested, issueType, onLabelAssign }) => {
               id={cause.value}
               name="rootCause"
               value={cause.value}
-              checked={selectedRootCause === cause.value}
               onChange={() => handleSelection(cause.value)}
               className="mr-2"
             />

@@ -1,16 +1,16 @@
-import React, { useState }from 'react'
-import ReactDOM from 'react-dom/client'
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import ProjectSelector from './components/ProjectSelector';
-import EnvironmentSelector from './components/EnvironmentSelector'
-import IssueTypeSelector  from './components/IssueTypeSelector'
-// import { TimeSelector } from './components/TimeSelector'
-import RootCauseSelector from './components/RootCauseSelector'
+import EnvironmentSelector from './components/EnvironmentSelector';
+import IssueTypeSelector from './components/IssueTypeSelector';
+import RootCauseSelector from './components/RootCauseSelector';
 
 // Main App Component
 function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [environmentDetails, setEnvironmentDetails] = useState(null);
   const [issueType, setIssueType] = useState(null);
+  const [assignedLabel, setAssignedLabel] = useState(null);
 
   const handleProjectSelect = (project) => {
     setSelectedProject(project);
@@ -25,6 +25,11 @@ function App() {
   const handleIssueTypeSelect = (type) => {
     setIssueType(type);
     console.log('Selected Issue Type:', type);
+  };
+
+  const handleLabelAssign = (label) => {
+    setAssignedLabel(label);
+    console.log('Assigned Label:', label);
   };
 
   return (
@@ -45,19 +50,31 @@ function App() {
 
         {/* Step 2: Environment Details Validated */}
         {environmentDetails && (
-          <IssueTypeSelector onIssueTypeSelect={handleIssueTypeSelect} />
-        )}
-
-        {/* Placeholder for further steps */}
-        {environmentDetails && (
           <IssueTypeSelector
             wasTested={environmentDetails.wasTested}
-            onIssueTypeSelect={(label) => {
-              console.log('Assigned Label:', label);
-              // Handle the assigned label
-            }}
+            onIssueTypeSelect={handleIssueTypeSelect}
           />
         )}
+
+        {/* Step 3: Root Cause Selection */}
+        {issueType === 'Issue' && environmentDetails && (
+          <RootCauseSelector
+            wasTested={environmentDetails.wasTested}
+            selectedIssueType={issueType}
+            onLabelAssign={handleLabelAssign}
+          />
+        )}
+
+        {/* Debugging Information */}
+        <div className="bg-gray-100 p-4 rounded shadow mt-4">
+          <h3 className="text-lg font-semibold">Debugging Info</h3>
+          <ul className="list-disc list-inside text-sm">
+            <li>Selected Project: {selectedProject || 'None'}</li>
+            <li>Environment Details: {JSON.stringify(environmentDetails) || 'None'}</li>
+            <li>Selected Issue Type: {issueType || 'None'}</li>
+            <li>Assigned Label: {assignedLabel || 'None'}</li>
+          </ul>
+        </div>
       </main>
 
       <footer className="mt-8 text-center text-gray-500 text-sm">
