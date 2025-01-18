@@ -28,47 +28,102 @@ const ProjectSelector = ({ onProjectSelect, onEnvironmentSelect }) => {
   useEffect(() => {
     const checkTestingStatus = async () => {
       if (selectedProject && date && environment && version) {
+        console.debug("Starting testing status check...");
+        console.debug("Inputs:", { selectedProject, date, environment, version });
+  
         try {
           const response = await fetch('/src/data/testing_history.json');
           const data = await response.json();
-
+  
+          console.debug("Fetched testing history:", data);
+  
           // Find matching inquiry data
           const projectPrefix = selectedProject.split('-')[0];
-          const testingData = data.find(item =>
-            item.Inquiry.startsWith(projectPrefix)
+          const testingData = data.find(item => 
+            item.Inquiry.startsWith(projectPrefix) && item.Inquiry !== "Unspecified"
           );
-
+  
+          console.debug("Matched project data:", testingData);
+  
           if (testingData) {
-            const envDetails = testingData.Environment_Details.find(detail => {
-              return (
-                detail.Environment_Version.includes(environment) &&
-                detail.Environment_Version.includes(version) &&
-                new Date(date) >= new Date(detail.StartDate) &&
-                new Date(date) <= new Date(detail.EndDate)
-              );
-            });
-
-            setTestingDetails({
-              wasTested: !!envDetails,
-              details: envDetails?.Details || [],
-            });
-
-            onEnvironmentSelect({
-              wasTested: !!envDetails,
-              details: envDetails?.Details || [],
-              environment,
-              version,
-              date,
-            });
+            const relevantDetails = testingData.Environment_Details.map(detail => {
+              const isEnvironmentMatch = detail.Environment.includes(environment);
+              const isVersionMatch = detail.Version.includes(version);
+  
+              let testingStatus = "Not Tested";
+              let timeGap = null;
+  
+              if (isEnvironmentMatch && isVersionMatch) {
+                const ticketDate = new Date(date);
+                const startDate = new Date(detail.StartDate);
+                const endDate = new Date(detail.EndDate);
+  
+                if (ticketDate < startDate) {
+                  testingStatus = "Not Tested";
+                  timeGap = Math.ceil((startDate - ticketDate) / (1000 * 60 * 60 * 24));
+                } else if (ticketDate >= startDate && ticketDate <= endDate) {
+                  testingStatus = "Tested";
+                  timeGap = Math.ceil((ticketDate - startDate) / (1000 * 60 * 60 * 24));
+                } else if (ticketDate > endDate) {
+                  testingStatus = "Tested";
+                  timeGap = Math.ceil((ticketDate - endDate) / (1000 * 60 * 60 * 24));
+                }
+  
+                return {
+                  ...detail,
+                  isEnvironmentMatch,
+                  isVersionMatch,
+                  testingStatus,
+                  timeGap,
+                };
+              }
+  
+              return null;
+            }).filter(Boolean);
+  
+            console.debug("Relevant details with checks:", relevantDetails);
+  
+            if (relevantDetails.length > 0) {
+              const matchedDetail = relevantDetails[0]; // Use the first match for now
+              console.debug("Final matched detail:", matchedDetail);
+  
+              setTestingDetails({
+                wasTested: matchedDetail.testingStatus === "Tested",
+                details: matchedDetail.Details || [],
+                timeGap: matchedDetail.timeGap,
+                status: matchedDetail.testingStatus,
+              });
+  
+              onEnvironmentSelect({
+                wasTested: matchedDetail.testingStatus === "Tested",
+                details: matchedDetail.Details || [],
+                environment,
+                version,
+                date,
+                timeGap: matchedDetail.timeGap,
+                status: matchedDetail.testingStatus,
+              });
+            } else {
+              console.debug("No matching detail found for selected inputs.");
+              setTestingDetails({ wasTested: false, details: [], status: "Not Tested" });
+              onEnvironmentSelect({ wasTested: false, details: [], environment, version, date, status: "Not Tested" });
+            }
+          } else {
+            console.debug("No matching inquiry found for project prefix:", projectPrefix);
+            setTestingDetails({ wasTested: false, details: [], status: "Not Tested" });
+            onEnvironmentSelect({ wasTested: false, details: [], environment, version, date, status: "Not Tested" });
           }
         } catch (error) {
           console.error('Error checking testing status:', error);
         }
+      } else {
+        console.debug("Missing one or more required inputs. Skipping check.");
       }
     };
-
+  
     checkTestingStatus();
   }, [selectedProject, date, environment, version]);
+  
 
   return (
     <Card className="mb-6">
@@ -140,9 +195,9 @@ const ProjectSelector = ({ onProjectSelect, onEnvironmentSelect }) => {
             </div>
 
             {testingDetails && (
-              <div className="mt-4">
+              <div className={`mt-4 ${testingDetails.wasTested ? "text-green-500" : "text-red-500"}`}>
                 <h3 className="text-lg font-semibold">
-                  Testing Status: {testingDetails.wasTested ? 'Tested' : 'Not Tested'}
+                  Testing Status: {testingDetails.wasTested ? "Tested" : "Not Tested"}
                 </h3>
                 {testingDetails.details.length > 0 && (
                   <ul className="mt-2 list-disc list-inside">
