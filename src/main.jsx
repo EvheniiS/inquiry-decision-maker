@@ -2,7 +2,7 @@ import React, { useState }from 'react'
 import ReactDOM from 'react-dom/client'
 import ProjectSelector from './components/ProjectSelector';
 import EnvironmentSelector from './components/EnvironmentSelector'
-// import { IssueTypeSelector } from './components/IssueTypeSelector'
+import IssueTypeSelector  from './components/IssueTypeSelector'
 // import { TimeSelector } from './components/TimeSelector'
 // import { RootCauseSelector } from './components/RootCauseSelector'
 
@@ -10,6 +10,7 @@ import EnvironmentSelector from './components/EnvironmentSelector'
 function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [environmentDetails, setEnvironmentDetails] = useState(null);
+  const [issueType, setIssueType] = useState(null);
 
   const handleProjectSelect = (project) => {
     setSelectedProject(project);
@@ -21,23 +22,34 @@ function App() {
     console.log('Environment Details:', details);
   };
 
+  const handleIssueTypeSelect = (type) => {
+    setIssueType(type);
+    console.log('Selected Issue Type:', type);
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
           Inquiry Decision Maker
         </h1>
-        <p className="text-gray-600">
-          QA Team Analysis Tool
-        </p>
+        <p className="text-gray-600">QA Team Analysis Tool</p>
       </header>
 
       <main className="space-y-6">
-        {/* Add the ProjectSelector */}
+        {/* Step 1: Project and Environment Selection */}
         <ProjectSelector
           onProjectSelect={handleProjectSelect}
           onEnvironmentSelect={handleEnvironmentSelect}
         />
+
+        {/* Step 2: Environment Details Validated */}
+        {environmentDetails && (
+          <IssueTypeSelector onIssueTypeSelect={handleIssueTypeSelect} />
+        )}
+
+        {/* Placeholder for further steps */}
+        {/* Add TimeSelector and RootCauseSelector when ready */}
       </main>
 
       <footer className="mt-8 text-center text-gray-500 text-sm">
