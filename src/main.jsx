@@ -4,7 +4,7 @@ import ProjectSelector from './components/ProjectSelector';
 import EnvironmentSelector from './components/EnvironmentSelector'
 import IssueTypeSelector  from './components/IssueTypeSelector'
 // import { TimeSelector } from './components/TimeSelector'
-// import { RootCauseSelector } from './components/RootCauseSelector'
+import RootCauseSelector from './components/RootCauseSelector'
 
 // Main App Component
 function App() {
@@ -49,7 +49,15 @@ function App() {
         )}
 
         {/* Placeholder for further steps */}
-        {/* Add TimeSelector and RootCauseSelector when ready */}
+        {environmentDetails && (
+          <IssueTypeSelector
+            wasTested={environmentDetails.wasTested}
+            onIssueTypeSelect={(label) => {
+              console.log('Assigned Label:', label);
+              // Handle the assigned label
+            }}
+          />
+        )}
       </main>
 
       <footer className="mt-8 text-center text-gray-500 text-sm">
