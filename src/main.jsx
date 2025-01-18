@@ -38,18 +38,6 @@ function App() {
           onProjectSelect={handleProjectSelect}
           onEnvironmentSelect={handleEnvironmentSelect}
         />
-
-        {/* Conditionally render EnvironmentSelector */}
-        {selectedProject && (
-          <EnvironmentSelector
-            onEnvironmentChange={(env) =>
-              console.log('Selected Environment:', env)
-            }
-            onVersionChange={(version) =>
-              console.log('Selected Version:', version)
-            }
-          />
-        )}
       </main>
 
       <footer className="mt-8 text-center text-gray-500 text-sm">
