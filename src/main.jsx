@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState }from 'react'
 import ReactDOM from 'react-dom/client'
 import ProjectSelector from './components/ProjectSelector';
 import EnvironmentSelector from './components/EnvironmentSelector'
@@ -8,6 +8,19 @@ import EnvironmentSelector from './components/EnvironmentSelector'
 
 // Main App Component
 function App() {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [environmentDetails, setEnvironmentDetails] = useState(null);
+
+  const handleProjectSelect = (project) => {
+    setSelectedProject(project);
+    console.log('Selected Project:', project);
+  };
+
+  const handleEnvironmentSelect = (details) => {
+    setEnvironmentDetails(details);
+    console.log('Environment Details:', details);
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <header className="mb-8">
@@ -20,25 +33,34 @@ function App() {
       </header>
 
       <main className="space-y-6">
-        {/* Components will be added here as we create them */}
-        <div className="space-y-4 bg-white shadow-sm rounded-lg p-6">
-          {/* Initial placeholder for our workflow */}
-          <p className="text-gray-700">
-            Loading workflow components...
-          </p>
-        </div>
+        {/* Add the ProjectSelector */}
+        <ProjectSelector
+          onProjectSelect={handleProjectSelect}
+          onEnvironmentSelect={handleEnvironmentSelect}
+        />
+
+        {/* Conditionally render EnvironmentSelector */}
+        {selectedProject && (
+          <EnvironmentSelector
+            onEnvironmentChange={(env) =>
+              console.log('Selected Environment:', env)
+            }
+            onVersionChange={(version) =>
+              console.log('Selected Version:', version)
+            }
+          />
+        )}
       </main>
 
       <footer className="mt-8 text-center text-gray-500 text-sm">
         <p>Internal QA Tool - 2025</p>
       </footer>
     </div>
-  )
+  );
 }
 
-// Mount the React application
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-)
+);
