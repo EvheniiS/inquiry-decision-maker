@@ -38,23 +38,24 @@ const InquiryDecisionFlow: React.FC<InquiryDecisionFlowProps> = ({ projectData }
   // Environment options
   const environments: string[] = ['DEV', 'TEST', 'LIVETEST', 'PROD'];
 
-  // Load inquiry data
-  useEffect(() => {
-    const loadInquiryData = async () => {
-      try {
-        const response = await window.fs.readFile('data/Example.json');
-        const text = new TextDecoder().decode(response);
-        const data: InquiryData[] = JSON.parse(text);
-        setInquiryData(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading inquiry data:', error);
-        setIsLoading(false);
-      }
-    };
+// Load inquiry data
+useEffect(() => {
+  const loadInquiryData = async () => {
+    try {
+      const response = await window.fs.readFile('/src/data/Example.json');
+      const text = new TextDecoder().decode(response);
+      const data: InquiryData[] = JSON.parse(text);
+      setInquiryData(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error loading inquiry data:', error);
+      // Show error state instead of just setting isLoading to false
+      setIsLoading(false);
+    }
+  };
 
-    loadInquiryData();
-  }, []);
+  loadInquiryData();
+}, []);
 
   // Helper functions
   const getAvailableVersions = (): string[] => {
@@ -230,9 +231,33 @@ const InquiryDecisionFlow: React.FC<InquiryDecisionFlowProps> = ({ projectData }
   };
 
   // Loading state
-  if (isLoading) {
-    return <div className="text-center">Loading inquiry data...</div>;
+if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-sm">
+          <div className="flex items-center space-x-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <span className="text-lg text-gray-700">Loading inquiry data...</span>
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <Card className="w-full max-w-lg mx-auto">
+          <CardHeader>
+            <CardTitle>Inquiry Decision Flow</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Rest of your content */}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 
   // Main render
   return (
