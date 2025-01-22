@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import ProjectSelector from './components/ProjectSelector';
-import EnvironmentSelector from './components/EnvironmentSelector';
+// import EnvironmentSelector from './components/EnvironmentSelector';
 import IssueTypeSelector from './components/IssueTypeSelector';
 import RootCauseSelector from './components/RootCauseSelector';
 
