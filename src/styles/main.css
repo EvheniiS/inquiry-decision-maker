@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .step-indicator {
+    @apply w-8 h-8 rounded-full flex items-center justify-center font-medium text-sm;
+  }
+
+  .step-active {
+    @apply bg-blue-500 text-white;
+  }
+
+  .step-completed {
+    @apply bg-green-500 text-white;
+  }
+
+  .step-pending {
+    @apply bg-gray-200 text-gray-500;
+  }
+
+  .button-base {
+    @apply px-4 py-2 rounded-md transition-colors duration-200 font-medium;
+  }
+
+  .button-primary {
+    @apply button-base bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed;
+  }
+
+  .button-secondary {
+    @apply button-base bg-gray-500 text-white hover:bg-gray-600;
+  }
+
+  .input-base {
+    @apply w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50;
+  }
+
+  .select-base {
+    @apply input-base appearance-none bg-white;
+  }
+}
