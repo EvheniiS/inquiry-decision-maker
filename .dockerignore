@@ -1,0 +1,7 @@
+node_modules
+dist
+npm-debug.log
+Dockerfile
+.dockerignore
+OLD_Artifacts
+src\data\testing_history-exmpl.json
