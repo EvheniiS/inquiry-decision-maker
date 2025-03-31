@@ -29,8 +29,8 @@ def extract_project_names(input_json_path, output_json_path):
 
 if __name__ == "__main__":
     # Example usage
-    input_path = "./jsonObj/Fix-NotAllDataParsed_PI_15-18_Cleaned.json"  # Your parsed QA data
-    output_path = "project_names.json"   # New file for project names
+    input_path = "./src/data/testing_history.json"  # Your parsed QA data
+    output_path = "./src/data/project_names.json"   # New file for project names
     
     result = extract_project_names(input_path, output_path)
     print(f"Found {result['total_count']} unique project names")

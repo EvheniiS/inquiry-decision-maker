@@ -59,6 +59,7 @@ class QADataParser:
     def clean_line(self, line):
         original = line
         line = line.replace(" LT ", " LIVETEST ").replace(" LIVE ", " PROD ")
+        line = line.replace("→", "-")  # Replace arrow with hyphen
         line = re.sub(r'\s+', ' ', line)
         line = re.sub(r'\s*-\s*$', '', line)
         cleaned = line.strip()
@@ -220,7 +221,7 @@ def test_with_file(file_path):
 if __name__ == "__main__":
     try:
         # Assuming the script is in the Py_Scripts directory
-        file_name = "PI_15-18_Cleaned.txt"
+        file_name = "PI_15-19.txt"
         file_path = os.path.join("Py_Scripts", file_name)
 
         print(file_path)  # This will output: Py_Scripts/PI_15-18_Cleaned.txt
