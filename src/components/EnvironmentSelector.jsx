@@ -2,7 +2,7 @@ import React from 'react';
 
 export const EnvironmentSelector = ({ onEnvironmentChange, onVersionChange }) => {
   const environments = ['DEV', 'TEST', 'LIVETEST', 'PROD'];
-  const versions = ['3.41/4.41', '5.5','5.6','5.7','5.8','5.9','5.10','5.11'];
+  const versions = ['3.41/4.41', '5.5','5.6','5.7','5.8','5.9','5.10','5.11','5.12'];
 
   return (
     <div className="p-4">
